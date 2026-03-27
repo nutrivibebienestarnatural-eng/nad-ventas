@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NAD Argentina · Ventas</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <div class="logo-name">NAD Argentina</div>
+      <div class="logo-sub">Gestión de ventas</div>
+    </div>
+    <nav>
+      <div class="nav active" data-page="dashboard">📊 Resumen</div>
+      <div class="nav" data-page="pedidos">📋 Pedidos</div>
+      <div class="nav" data-page="nuevo">➕ Nuevo pedido</div>
+      <div class="nav" data-page="stock">📦 Stock <span class="nav-badge" id="badge-stock" style="display:none">!</span></div>
+      <div class="nav" data-page="envios">🚚 Envíos</div>
+      <div class="nav" data-page="correo">✉️ Correo Arg.</div>
+      <div class="nav" data-page="catalogo">🧪 Catálogo</div>
+    </nav>
+    <button class="btn-close-sidebar" id="sidebar-close">✕</button>
+  </aside>
+
+  <div class="topbar">
+    <button id="menu-toggle">☰</button>
+    <span>NAD Argentina</span>
+  </div>
+
+  <main class="main">
+
+    <!-- DASHBOARD -->
+    <section class="page active" id="page-dashboard">
+      <div class="ph">
+        <h1 class="ptitle">Resumen</h1>
+        <span class="muted" id="fecha-hoy"></span>
+      </div>
+      <div id="alerta-banner"></div>
+      <div class="stats">
+        <div class="stat"><div class="slabel">Pedidos nuevos</div><div class="sval blue" id="stat-nuevos">—</div></div>
+        <div class="stat"><div class="slabel">En preparación</div><div class="sval amber" id="stat-prep">—</div></div>
+        <div class="stat"><div class="slabel">Enviados</div><div class="sval green" id="stat-enviados">—</div></div>
+        <div class="stat"><div class="slabel">Stock crítico</div><div class="sval red" id="stat-stock">—</div></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Últimos pedidos</div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>N° Orden</th><th>Cliente</th><th>Total</th><th>Estado</th></tr></thead>
+            <tbody id="dash-pedidos"><tr><td colspan="4" class="empty">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- PEDIDOS -->
+    <section class="page" id="page-pedidos">
+      <div class="ph">
+        <h1 class="ptitle">Pedidos</h1>
+        <div class="ph-actions">
+          <select class="fi" id="filtro-estado" onchange="filtrarPedidos()">
+            <option value="">Todos</option>
+            <option value="nuevo">Nuevo</option>
+            <option value="preparacion">En preparación</option>
+            <option value="enviado">Enviado</option>
+            <option value="cancelado">Cancelado</option>
+          </select>
+          <button class="btn btn-p" onclick="goTo('nuevo')">+ Nuevo</button>
+        </div>
+      </div>
+      <div class="card" style="padding:0">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>N° Orden</th><th>Fecha</th><th>Cliente</th><th>Total</th><th>Estado</th><th></th></tr></thead>
+            <tbody id="tabla-pedidos"><tr><td colspan="6" class="empty">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- NUEVO PEDIDO -->
+    <section class="page" id="page-nuevo">
+      <div class="ph"><h1 class="ptitle">Nuevo pedido</h1></div>
+      <div class="card">
+        <div class="card-title">Datos del cliente</div>
+        <div class="grid2">
+          <div class="fg"><label class="fl">Nombre completo *</label><input class="fi" id="cli-nombre" placeholder="Ej: Laura Giménez"></div>
+          <div class="fg"><label class="fl">WhatsApp</label><input class="fi" id="cli-tel" placeholder="11 2345-6789"></div>
+          <div class="fg"><label class="fl">Email</label><input class="fi" id="cli-email" type="email" placeholder="cliente@email.com"></div>
+          <div class="fg"><label class="fl">Canal de venta</label>
+            <select class="fi" id="cli-canal">
+              <option>Instagram</option><option>WhatsApp</option><option>Mercado Libre</option><option>Tienda Nube</option><option>Presencial</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Dirección de envío</div>
+        <div class="grid2">
+          <div class="fg full"><label class="fl">Calle y número</label><input class="fi" id="env-calle" placeholder="Av. Corrientes 1234"></div>
+          <div class="fg"><label class="fl">Ciudad</label><input class="fi" id="env-ciudad" placeholder="Córdoba"></div>
+          <div class="fg"><label class="fl">Provincia</label>
+            <select class="fi" id="env-provincia">
+              <option>Córdoba</option><option>Buenos Aires</option><option>CABA</option><option>Santa Fe</option><option>Mendoza</option><option>Tucumán</option><option>Salta</option><option>Entre Ríos</option><option>Chaco</option><option>Corrientes</option><option>Neuquén</option><option>Río Negro</option><option>San Juan</option><option>Jujuy</option><option>Misiones</option><option>San Luis</option><option>La Pampa</option><option>Catamarca</option><option>La Rioja</option><option>Santa Cruz</option><option>Tierra del Fuego</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Código postal</label><input class="fi" id="env-cp" placeholder="5850"></div>
+          <div class="fg"><label class="fl">Tel. destino (para etiqueta)</label><input class="fi" id="env-tel" placeholder="3571 123456"></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Productos del pedido</div>
+        <div class="search-bar">
+          <span class="search-icon">🔍</span>
+          <input id="prod-search" placeholder="Buscar producto..." oninput="filterProds()">
+        </div>
+        <div class="cat-pills" id="cat-pills"></div>
+        <div class="prod-list" id="prod-list"><div class="empty">Cargando productos...</div></div>
+        <div class="cart-section-title">Productos agregados al pedido</div>
+        <div class="cart-list" id="cart-list"><div class="empty small-text">Ningún producto agregado aún.</div></div>
+        <div class="total-bar">
+          <span class="muted">Total del pedido</span>
+          <span class="total-val" id="total-val">$0</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Notas internas</div>
+        <textarea class="fi" id="pedido-notas" rows="2" placeholder="Color, talle, instrucciones especiales..."></textarea>
+      </div>
+      <div class="form-actions">
+        <button class="btn" onclick="goTo('pedidos')">Cancelar</button>
+        <button class="btn btn-p" onclick="crearOrden()">Crear orden de compra</button>
+      </div>
+    </section>
+
+    <!-- STOCK -->
+    <section class="page" id="page-stock">
+      <div class="ph">
+        <h1 class="ptitle">Gestión de stock</h1>
+        <div class="ph-actions">
+          <button class="btn btn-s active-filter" id="sf-todos" onclick="filtrarStock('todos')">Todos</button>
+          <button class="btn btn-s" id="sf-bajo" onclick="filtrarStock('bajo')">Stock bajo</button>
+          <button class="btn btn-s" id="sf-sin" onclick="filtrarStock('sin')">Sin stock</button>
+        </div>
+      </div>
+      <div class="card" style="padding:0">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Producto</th><th>Stock actual</th><th>Mínimo</th><th>Estado</th><th>Acción</th></tr></thead>
+            <tbody id="stock-tbody"><tr><td colspan="5" class="empty">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ENVÍOS -->
+    <section class="page" id="page-envios">
+      <div class="ph"><h1 class="ptitle">Envíos</h1></div>
+      <div class="card" style="padding:0">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>N° Orden</th><th>Cliente</th><th>Dirección</th><th>Estado</th><th>Tracking</th><th>Acción</th></tr></thead>
+            <tbody id="tabla-envios"><tr><td colspan="6" class="empty">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- CORREO ARGENTINO -->
+    <section class="page" id="page-correo">
+      <div class="ph"><h1 class="ptitle">Correo Argentino</h1></div>
+      <div class="card" style="padding:0">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th><input type="checkbox" id="chkAll" onchange="toggleAll(this)"></th><th>N° Orden</th><th>Cliente</th><th>Destino</th><th>Peso (kg)</th><th>Tracking</th></tr></thead>
+            <tbody id="tabla-correo"><tr><td colspan="6" class="empty">Cargando...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="form-actions" style="justify-content:flex-start;flex-wrap:wrap">
+        <button class="btn btn-p" onclick="exportarCSV()">Exportar seleccionados (.csv)</button>
+        <label class="btn" style="cursor:pointer">Importar tracking (.csv)<input type="file" accept=".csv" style="display:none" onchange="importarTracking(this)"></label>
+      </div>
+      <div class="card info-card">
+        <div class="card-title">Cómo funciona</div>
+        <ol class="steps">
+          <li>Marcá los pedidos listos para enviar</li>
+          <li>Hacé clic en <strong>Exportar</strong> → se descarga un .csv con los datos</li>
+          <li>Subí ese archivo en el portal de <strong>Correo Argentino Empresas</strong></li>
+          <li>Correo te devuelve un .csv con los códigos de seguimiento</li>
+          <li>Hacé clic en <strong>Importar tracking</strong> → los códigos quedan guardados en cada pedido</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- CATÁLOGO -->
+    <section class="page" id="page-catalogo">
+      <div class="ph">
+        <h1 class="ptitle">Catálogo</h1>
+        <span class="muted" id="cat-count"></span>
+      </div>
+      <div class="card" style="padding:0">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Producto</th><th>Categoría</th><th>Precio</th><th>Precio promo</th><th>Envío gratis</th></tr></thead>
+            <tbody id="catalogo-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL STOCK -->
+  <div class="modal-overlay" id="modal-stock">
+    <div class="modal">
+      <div class="modal-title">Ajustar stock</div>
+      <div class="muted small-text" id="modal-stock-nombre"></div>
+      <div class="grid2">
+        <div class="fg"><label class="fl">Stock actual</label><input class="fi" type="number" min="0" id="ms-stock" placeholder="0"></div>
+        <div class="fg"><label class="fl">Mínimo (alerta)</label><input class="fi" type="number" min="0" id="ms-min" placeholder="3"></div>
+      </div>
+      <p class="small-text muted">Te avisaremos cuando el stock baje del mínimo definido.</p>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('modal-stock')">Cancelar</button>
+        <button class="btn btn-ok" onclick="guardarStock()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL ETIQUETA -->
+  <div class="modal-overlay" id="modal-envio">
+    <div class="modal">
+      <div class="modal-title">Actualizar envío</div>
+      <div class="muted small-text" id="modal-envio-sub"></div>
+      <div class="fg"><label class="fl">Código de seguimiento</label><input class="fi" id="me-tracking" placeholder="Ej: RA342891236AR"></div>
+      <div class="fg"><label class="fl">Empresa de envío</label>
+        <select class="fi" id="me-empresa">
+          <option>Correo Argentino</option><option>Andreani</option><option>OCA</option><option>Otro</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Estado del pedido</label>
+        <select class="fi" id="me-estado">
+          <option value="nuevo">Nuevo</option>
+          <option value="preparacion">En preparación</option>
+          <option value="enviado">Enviado</option>
+          <option value="cancelado">Cancelado</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">Notas del envío</label><input class="fi" id="me-notas" placeholder="Ej: paquete frágil..."></div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal('modal-envio')">Cancelar</button>
+        <button class="btn btn-ok" onclick="guardarEnvio()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL OK -->
+  <div class="modal-overlay" id="modal-ok">
+    <div class="modal" style="text-align:center;align-items:center;max-width:300px">
+      <div style="font-size:32px" id="ok-icon">✅</div>
+      <div class="modal-title" id="ok-title">¡Listo!</div>
+      <div class="muted small-text" id="ok-msg"></div>
+      <button class="btn btn-p" onclick="closeModal('modal-ok')">Aceptar</button>
+    </div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
